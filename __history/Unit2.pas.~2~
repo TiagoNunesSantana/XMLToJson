@@ -1,0 +1,31 @@
+unit Unit2;
+
+interface
+
+type
+  TEnderecos = class
+  private
+    FLogradouro : String;
+    FNumero     : String;
+    FBairro     : String;
+    FCep        : String;
+    FCidade     : String;
+    FEstado     : String;
+    procedure SetLogradouro(const Value: String);
+    procedure SetNumero(const Value: String);
+    procedure SetBairro(const Value: String);
+    procedure SetCep(const Value: String);
+    procedure SetCidade(const Value: String);
+    procedure SetEstado(const Value: String);
+  published
+    property Logradouro : String read FLogradouro write FLogradouro;
+    property Numero     : String read FNumero     write FNumero    ;
+    property Bairro     : String read FBairro     write FBairro    ;
+    property Cep        : String read FCep        write FCep       ;
+    property Cidade     : String read FCidade     write FCidade    ;
+    property Estado     : String read FEstado     write FEstado    ;
+end;
+
+implementation
+
+end.

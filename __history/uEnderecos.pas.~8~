@@ -1,0 +1,63 @@
+unit uEnderecos;
+
+interface
+
+uses
+  System.SysUtils;
+
+type
+  TEnderecos = class
+  private
+    FLogradouro : String;
+    FNumero     : String;
+    FBairro     : String;
+    FCep        : String;
+    FCidade     : String;
+    FEstado     : String;
+    procedure SetNumero(const Value: String);
+    procedure SetCep(const Value: String);
+  public
+    property Logradouro: String read FLogradouro write FLogradouro;
+    property Numero: String read FNumero write SetNumero;
+    property Bairro: String read FBairro write FBairro;
+    property Cep: String read FCep write SetCep;
+    property Cidade: String read FCidade write FCidade;
+    property Estado: String read FEstado write FEstado;
+end;
+
+implementation
+
+{ TEnderecos }
+
+function VerNumero(sTxt: string): boolean;
+var
+  i: integer;
+begin
+  result := false;
+  for i := 1 to length(sTxt) do
+  begin
+    if sTxt[i] in ['0'..'9'] then
+    begin
+      Result := True;
+    end else
+    begin
+      Result := False;
+    end;
+  end;
+end;
+
+procedure TEnderecos.SetCep(const Value: String);
+begin
+  if Pos('-',Value)<=0 then
+    raise Exception.Create('Digite apenas numeros.') else
+    FCep := Value;
+end;
+
+procedure TEnderecos.SetNumero(const Value: String);
+begin
+  if Pos('-',Value)<=0 then
+    raise Exception.Create('Digite apenas numeros.') else
+    FNumero := Value;
+end;
+
+end.
