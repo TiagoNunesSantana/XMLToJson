@@ -3,8 +3,7 @@ program Project1;
 uses
   Vcl.Forms,
   uPrincipal in 'uPrincipal.pas' {frmPrincipal},
-  uEnderecos in 'uEnderecos.pas',
-  uObjJson in 'uObjJson.pas';
+  uConvertXMLtoJSON in 'uConvertXMLtoJSON.pas';
 
 {$R *.res}
 

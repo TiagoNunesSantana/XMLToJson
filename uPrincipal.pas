@@ -7,7 +7,7 @@ uses
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB,
   Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.StdCtrls,
   Datasnap.DBClient, Vcl.Mask, Vcl.DBCtrls, xmldoc, Xml.XMLIntf, system.json,
-  system.VarUtils, Rest.Json, uObjJson;
+  system.VarUtils, Rest.Json, IniFiles;
 type
   TfrmPrincipal = class(TForm)
     StatusBar1: TStatusBar;
@@ -38,13 +38,13 @@ type
     btnDeletar: TButton;
     btnInserir: TButton;
     btnJSON: TButton;
-    procedure btnCarregaGridClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
     procedure btnDeletarClick(Sender: TObject);
     procedure btnInserirClick(Sender: TObject);
     procedure DBGrid1DblClick(Sender: TObject);
     procedure btnJSONClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
 
   public
@@ -53,25 +53,13 @@ type
 
 var
   frmPrincipal: TfrmPrincipal;
+  arqJson: TextFile;
 
 implementation
 
 {$R *.dfm}
 
-uses uEnderecos;
-
-procedure TfrmPrincipal.btnCarregaGridClick(Sender: TObject);
-var _End: TEnderecos;
-begin
-  _End := TEnderecos.Create;
-  _End.Logradouro := 'Logradouro 1';
-  _End.Numero := 'Numero 1';
-  _End.Bairro := 'Bairro 1';
-  _End.Cep := 'Cep 1';
-  _End.Cidade := 'Cidade 1';
-  _End.Estado := 'Estado 1';
-  _End.Free;
-end;
+uses uConvertXMLtoJSON;
 
 procedure TfrmPrincipal.btnSalvarClick(Sender: TObject);
 begin
@@ -91,23 +79,19 @@ end;
 
 procedure TfrmPrincipal.btnJSONClick(Sender: TObject);
 var
-  _OD: TOpenDialog;
-  _Json: TStringList;
-  _XML: TXMLDocument;
-  _ArqXml: TStringList;
-  _ObjJson: TObjJson;
+  _XMLDoc: TXMLDocument;
+  sJSON: string;
+  _XMLNode: IXMLNode;
 begin
-  _OD:= TOpenDialog.Create(Application);
-  _OD.Filter:= 'enderecos.xml';
-                                                              -
-  _ArqXml := TStringList.Create;
-  _ArqXml.LoadFromFile(_OD.Filter);
+  _XMLDoc := TXMLDocument.Create(Application);
+  _XMLDoc.LoadFromFile('enderecos.xml');
+  _XMLDoc.Active:=True;
 
-  _ObjJson.JSON := _ArqXml.Text;
+  _XMLNode := _XMLDoc.DocumentElement.ChildNodes.FindNode('ROWDATA');
 
-  _Json := TStringList.Create;
-  _Json.Text := TJson.ObjectToJsonString(_ObjJson);
-  _Json.SaveToFile('enderecos.json');
+  sJSON := xml_to_json(_XMLNode);
+
+  Writeln(arqJson, sJSON);
 end;
 
 procedure TfrmPrincipal.DBGrid1DblClick(Sender: TObject);
@@ -122,6 +106,21 @@ begin
     cdsDados.CreateDataSet;
     cdsDados.EmptyDataSet;
     cdsDados.Active := true;
+  end;
+end;
+
+procedure TfrmPrincipal.FormShow(Sender: TObject);
+begin
+  AssignFile(arqJson, 'enderecos.json');
+  {$I-}
+  Reset(arqJson);
+  {$I+}
+  if (IOResult <> 0) then
+    Rewrite(arqJson) { arquivo não existe e será criado }
+  else
+  begin
+    CloseFile(arqJson);
+    Append(arqJson); { o arquivo existe e será aberto para saídas adicionais }
   end;
 end;
 

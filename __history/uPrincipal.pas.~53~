@@ -1,0 +1,134 @@
+unit uPrincipal;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB,
+  Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.StdCtrls,
+  Datasnap.DBClient, Vcl.Mask, Vcl.DBCtrls, xmldoc, Xml.XMLIntf, system.json,
+  system.VarUtils, Rest.Json, IniFiles;
+type
+  TfrmPrincipal = class(TForm)
+    StatusBar1: TStatusBar;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    DBGrid1: TDBGrid;
+    cdsDados: TClientDataSet;
+    dsDados: TDataSource;
+    cdsDadosLogradouro: TStringField;
+    cdsDadosNumero: TIntegerField;
+    cdsDadosBairro: TStringField;
+    cdsDadosCEP: TIntegerField;
+    cdsDadosCidade: TStringField;
+    cdsDadosEstado: TStringField;
+    Label1: TLabel;
+    DBEdit1: TDBEdit;
+    Label2: TLabel;
+    DBEdit2: TDBEdit;
+    Label3: TLabel;
+    DBEdit3: TDBEdit;
+    Label4: TLabel;
+    DBEdit4: TDBEdit;
+    Label5: TLabel;
+    DBEdit5: TDBEdit;
+    Label6: TLabel;
+    DBEdit6: TDBEdit;
+    btnSalvar: TButton;
+    btnDeletar: TButton;
+    btnInserir: TButton;
+    btnJSON: TButton;
+    procedure FormCreate(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure btnDeletarClick(Sender: TObject);
+    procedure btnInserirClick(Sender: TObject);
+    procedure DBGrid1DblClick(Sender: TObject);
+    procedure btnJSONClick(Sender: TObject);
+  private
+    iniconf: TIniFile;
+    procedure GenereteTree(XMLNode: IXMLNode; TreeNode: TTreeNode);
+  public
+    { Public declarations }
+  end;
+
+var
+  frmPrincipal: TfrmPrincipal;
+
+implementation
+
+{$R *.dfm}
+
+uses uConvertXMLtoJSON;
+
+procedure TfrmPrincipal.btnSalvarClick(Sender: TObject);
+begin
+  cdsDados.ApplyUpdates(0);
+end;
+
+procedure TfrmPrincipal.btnDeletarClick(Sender: TObject);
+begin
+  if Application.MessageBox('Deseja excluir ?','Atenção',MB_YESNO+MB_ICONQUESTION)=IDYES then
+    cdsDados.Delete;
+end;
+
+procedure TfrmPrincipal.btnInserirClick(Sender: TObject);
+begin
+  cdsDados.Insert;
+end;
+
+procedure TfrmPrincipal.btnJSONClick(Sender: TObject);
+var
+  _Json: TStringList;
+  _ArqXml: TStringList;
+begin
+  try
+    _ArqXml := TStringList.Create;
+    _ArqXml.LoadFromFile('enderecos.xml');
+
+    _Json := TStringList.Create;
+    _Json.Text := TJson.ObjectToJsonString(_ObjJson);
+    _Json.SaveToFile('enderecos.json');
+  finally
+    FreeAndNil(_ArqXml);
+    FreeAndNil(_ObjJson);
+    FreeAndNil(_Json);
+  end;
+end;
+
+procedure TfrmPrincipal.DBGrid1DblClick(Sender: TObject);
+begin
+  cdsDados.Edit;
+end;
+
+procedure TfrmPrincipal.FormCreate(Sender: TObject);
+begin
+  if not(cdsDados.Active) then
+  begin
+    cdsDados.CreateDataSet;
+    cdsDados.EmptyDataSet;
+    cdsDados.Active := true;
+  end;
+  iniconf := TIniFile.Create(ExtractFilePath(Application.ExeName)+'conf.ini');
+end;
+
+procedure TfrmPrincipal.GenereteTree(XMLNode: IXMLNode; TreeNode: TTreeNode);
+var
+NodeText : string;
+NewTreeNode: TTreeNode;
+TreeView1: TTreeView;
+I : Integer;
+begin
+  if XMLNode.NodeType <> ntElement then
+  Exit;
+  NodeText := XMLNode.NodeName;
+  if XMLNode.IsTextElement then
+   NodeText := NodeText + '=' + XMLNode.NodeValue;
+   TreeView1 := TTreeView.Create;
+   NewTreeNode := TreeView1.Items.AddChild(TreeNode, NodeText);
+   if XMLNode.HasChildNodes then
+  for I := 0 to XMLNode.ChildNodes.Count - 1 do
+    GenereteTree(XMLNode.ChildNodes[I], NewTreeNode);
+  end;
+end;
+
+end.

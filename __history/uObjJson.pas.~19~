@@ -1,0 +1,23 @@
+unit uObjJson;
+
+interface
+
+type
+  TObjJson = class
+  private
+    FJSON: String;
+    procedure setJSON(const Value: String);
+  public
+    property JSON: String read FJSON write setJSON;
+end;
+
+implementation
+
+{ TObjJson }
+
+procedure setJSON(const Value: String);
+begin
+
+end;
+
+end.

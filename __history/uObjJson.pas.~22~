@@ -1,0 +1,36 @@
+unit uObjJson;
+
+interface
+
+type
+  TObjJson = class
+  private
+    FJSON: String;
+    procedure XMLtoJSON;
+  public
+    property JSON: String read FJSON write FJSON;
+  Constructor Create;
+  Destructor  Destroy; Override;
+end;
+
+implementation
+
+{ TObjJson }
+
+constructor TObjJson.Create;
+begin
+
+end;
+
+destructor TObjJson.Destroy;
+begin
+
+  inherited;
+end;
+
+procedure TObjJson.XMLtoJSON;
+begin
+  FJSON := '';
+end;
+
+end.

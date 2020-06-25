@@ -1,0 +1,32 @@
+unit uObjJson;
+
+interface
+
+uses
+  System.SysUtils;
+
+type
+  TObjJson = class
+  private
+    FJSON: String;
+    function XMLtoJSON: string;
+    function setJSON: string;
+  public
+    property JSON: String read XMLtoJSON write setJSON;
+end;
+
+implementation
+
+{ TObjJson }
+
+function TObjJson.setJSON: string;
+begin
+  Result := '0';
+end;
+
+function TObjJson.XMLtoJSON: string;
+begin
+ Result := '1';
+end;
+
+end.

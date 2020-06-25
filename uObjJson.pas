@@ -2,19 +2,43 @@ unit uObjJson;
 
 interface
 
-uses
-  System.SysUtils;
-
 type
   TObjJson = class
   private
-    FJSON : String;
+    FJSON: String;
+    procedure XMLtoJSON;
   public
     property JSON: String read FJSON write FJSON;
+  Constructor Create;
+  Destructor  Destroy; Override;
 end;
 
 implementation
 
 { TObjJson }
+
+uses uConvertXMLtoJSON;
+
+constructor TObjJson.Create;
+begin
+  XMLtoJSON;
+end;
+
+destructor TObjJson.Destroy;
+begin
+
+  inherited;
+end;
+
+procedure TObjJson.XMLtoJSON;
+var
+  //iVariable: IDataBindingXMLObject;
+  sJSON: string;
+begin
+    //iVariable: NewDataBindingXMLObject;
+    // faça algo no seu objeto XML
+    //sJSON := xml_to_json(variável);
+   // sJSON := xml_to_json(variável);
+end;
 
 end.
