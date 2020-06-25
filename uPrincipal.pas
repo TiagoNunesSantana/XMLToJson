@@ -99,14 +99,14 @@ var
 begin
   _OD:= TOpenDialog.Create(Application);
   _OD.Filter:= 'enderecos.xml';
-
+                                                              -
   _ArqXml := TStringList.Create;
   _ArqXml.LoadFromFile(_OD.Filter);
 
   _ObjJson.JSON := _ArqXml.Text;
 
   _Json := TStringList.Create;
-  _Json.Text := TJson.ObjectToJsonString();
+  _Json.Text := TJson.ObjectToJsonString(_ObjJson);
   _Json.SaveToFile('enderecos.json');
 end;
 
